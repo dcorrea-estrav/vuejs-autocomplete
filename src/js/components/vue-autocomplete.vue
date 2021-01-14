@@ -46,10 +46,10 @@
 
 <script>
 
-  /*! Copyright (c) 2016 Naufal Rabbani (http://github.com/BosNaufal)
+  /*! Copyright (c) 2021 Daniel H (http://github.com/dcorrea-estrav)
   * Licensed Under MIT (http://opensource.org/licenses/MIT)
   *
-  * Vue 2 Autocomplete @ Version 0.0.1
+  * Vue 2 Autocomplete @ Version 2.0.x
   *
   */
 

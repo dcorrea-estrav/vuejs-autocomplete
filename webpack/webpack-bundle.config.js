@@ -46,7 +46,7 @@ module.exports = {
 
     new webpack.BannerPlugin((
       [
-        "Copyright (c) 2016 Naufal Rabbani (http://github.com/BosNaufal)",
+        "Copyright (c) 2021 Daniel H. (http://github.com/dcorrea-estrav)",
         "\n",
         "Licensed Under MIT (http://opensource.org/licenses/MIT)",
         "\n",
