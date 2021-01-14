@@ -1,6 +1,6 @@
 {
   "name": "@dcorrea-estrav/vuejs-autocomplete",
-  "version": "1.0",
+  "version": "0.2.1",
   "description": "Autocomplete Component for Vue 2",
   "main": "./dist/vue2-autocomplete.js",
   "scripts": {
