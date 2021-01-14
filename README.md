@@ -1,26 +1,22 @@
 # Vue 2 Autocomplete
-Autocomplete Component For [Vue 2](http://vuejs.org). It's based on [vue-autocomplete](https://github.com/BosNaufal/vue-autocomplete). [LIVE DEMO HERE!](https://rawgit.com/BosNaufal/vue2-autocomplete/master/index.html)
+Autocomplete Component For [Vue 2](http://vuejs.org). It's based on [vue-autocomplete](https://github.com/dcorrea-estrav/vue-autocomplete).
 
-<p align="center">
-  <a href="./" title="Vue Autocomplete">
-    <img src="./src/img/demo.gif" alt="vue Autocomplete component" title="Vue Autocomplete Component"/>
-  </a>
-</p>
 
-## Install
-You can import [vue2-autocomplete.vue](./src/js/components/vue-autocomplete.vue) to your vue component file like [this](./src/js/components/app.vue) and process it with your preprocessor.
 
-You can install it via NPM
+## Instalacion
+Puede importar [vue2-autocomplete.vue](./src/js/components/vue-autocomplete.vue) a su archivo de componentes de esta manera [this](./src/js/components/app.vue) y procesarlo en su preprocesador.
+
+Lo puede instalar via NPM
 ```bash
-npm install vue2-autocomplete-js
+npm install vue2-autocomplete-2
 ```
 
-Or Just put it after Vue JS~
+O simplemente ponlo despues de VueJs~
 ```html
 <script src="https://vuejs.org/js/vue.min.js"></script>
 <script src="./dist/vue2-autocomplete.js"></script>
 <script>
-  // Don't Forget to register it
+  // No olvide registrarlo
   new Vue({
     components: {
       autocomplete: Vue2Autocomplete
@@ -30,28 +26,27 @@ Or Just put it after Vue JS~
 ```
 
 ## Import Style
-Don't forget to import vue 2 css. You can link it via html
+No olvide importar vue 2 css. Puede vincularlo a través de html
 ```html
 <link rel="stylesheet" href="vue2-autocomplete-js/dist/style/vue2-autocomplete.css">
 ```
 
-Or You can import it using commonJS
+O puede importarlo usando commonJS
 
 ```javascript
 require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
 ```
 
-Its style is very customizable. You can put any CSS over it. And You can add custom class via its prop.
+Su estilo es muy personalizable. Puedes poner cualquier CSS sobre él. Y puede agregar una clase personalizada a través de su prop.
 
-
-## Import Module
+## Importar modulo
 ```javascript
 import Autocomplete from 'vue2-autocomplete-js'
 // Or
 var Autocomplete = require('vue2-autocomplete-js');
 ```
 
-## Usage
+## Uso
 ```html
 <template>
 
@@ -83,7 +78,7 @@ var Autocomplete = require('vue2-autocomplete-js');
 </script>
 ```
 
-Available Props
+Props Disponibles
 ```html
 <template>
 
