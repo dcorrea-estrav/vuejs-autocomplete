@@ -16,6 +16,8 @@
   display: inline-block;
   min-width: 15%;
   margin-top: 10px;
+  overflow-y: auto;
+  max-height: 250px;
 }
 
 .autocomplete ul:before{
