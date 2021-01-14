@@ -21,27 +21,25 @@
       :class="`${getClassName('list')} autocomplete autocomplete-list`"
       v-show="showList && json.length"
     >
-      <ul>
+      <ul :class="`${getClassName('ulist')}`">
         <li
           v-for="(data, i) in json"
           :class="activeClass(i)"
         >
-          <a
-            href="#"
-            @click.prevent="selectList(data)"
-            @mousemove="mousemove(i)"
-          >
+            <a
+                href="#"
+                @click.prevent="selectList(data)"
+                @mousemove="mousemove(i)"
+            >
             <div v-if="onShouldRenderChild" v-html="onShouldRenderChild(data)"></div>
             <div v-if="!onShouldRenderChild">
-              <b class="autocomplete-anchor-text">{{ deepValue(data, anchor) }}</b>
-              <span class="autocomplete-anchor-label">{{ deepValue(data, label) }}</span>
+                <b class="autocomplete-anchor-text">{{ deepValue(data, anchor) }}</b>
+                <span class="autocomplete-anchor-label">{{ deepValue(data, label) }}</span>
             </div>
           </a>
         </li>
       </ul>
-
     </div>
-
   </div>
 </template>
 

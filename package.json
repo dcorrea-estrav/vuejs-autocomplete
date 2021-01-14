@@ -1,5 +1,5 @@
 {
-  "name": "vue2-autocomplete-2",
+  "name": "vuejs-autocomplete",
   "version": "0.2.1",
   "description": "Autocomplete Component for Vue 2",
   "main": "./dist/vue2-autocomplete.js",
@@ -15,16 +15,16 @@
     "url": "git+https://github.com/dcorrea-estrav/vue2-autocomplete.git"
   },
   "keywords": [
-    "vue-js",
+    "vuejs",
     "autocomplete",
     "remote-list",
     "form",
     "component",
-    "vue2-autocomplete",
+    "vuejs-autocomplete",
     "form-helper",
     "vue-2"
   ],
-  "author": "Daniel H <strike970124@gmail.com>",
+  "author": "Daniel H. <strike970124@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/dcorrea-estrav/vue2-autocomplete/issues"
