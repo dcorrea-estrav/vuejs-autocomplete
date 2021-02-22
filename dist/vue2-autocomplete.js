@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Daniel H. (http://github.com/dcorrea-estrav),
  * ,Licensed Under MIT (http://opensource.org/licenses/MIT),
  * ,
- * ,Vue 2 Autocomplete @ Version 2.0.2,
+ * ,Vue 2 Autocomplete @ Version 2.1.1,
  * 
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -149,363 +149,362 @@ return /******/ (function(modules) { // webpackBootstrap
 var ajax = null;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  props: {
-    id: String,
-    name: String,
-    className: String,
-    classes: {
-      type: Object,
-      default: function _default() {
+    props: {
+        id: String,
+        name: String,
+        className: String,
+        classes: {
+            type: Object,
+            default: function _default() {
+                return {
+                    wrapper: false,
+                    input: false,
+                    list: false,
+                    item: false
+                };
+            }
+        },
+        placeholder: String,
+        required: Boolean,
+
+        // Intial Value
+        initValue: {
+            type: String,
+            default: ""
+        },
+
+        // Manual List
+        options: Array,
+
+        // Filter After Get the data
+        filterByAnchor: {
+            type: Boolean,
+            default: true
+        },
+
+        // Anchor of list
+        anchor: {
+            type: String,
+            required: true
+        },
+
+        // Label of list
+        label: String,
+
+        // Debounce time
+        debounce: Number,
+
+        // ajax URL will be fetched
+        url: {
+            type: String,
+            required: true
+        },
+
+        // query param
+        param: {
+            type: String,
+            default: "q"
+        },
+
+        encodeParams: {
+            type: Boolean,
+            default: true
+        },
+
+        // Custom Params
+        customParams: Object,
+
+        // Custom Headers
+        customHeaders: Object,
+
+        // minimum length
+        min: {
+            type: Number,
+            default: 0
+        },
+
+        // Create a custom template from data.
+        onShouldRenderChild: Function,
+
+        // Process the result before retrieveng the result array.
+        process: Function,
+
+        // Callback
+        onInput: Function,
+        onShow: Function,
+        onBlur: Function,
+        onHide: Function,
+        onFocus: Function,
+        onSelect: Function,
+        onBeforeAjax: Function,
+        onAjaxProgress: Function,
+        onAjaxLoaded: Function,
+        onShouldGetData: Function
+    },
+
+    data: function data() {
         return {
-          wrapper: false,
-          input: false,
-          list: false,
-          item: false
+            showList: false,
+            type: "",
+            json: [],
+            focusList: "",
+            debounceTask: undefined
         };
-      }
-    },
-    placeholder: String,
-    required: Boolean,
-
-    // Intial Value
-    initValue: {
-      type: String,
-      default: ""
     },
 
-    // Manual List
-    options: Array,
 
-    // Filter After Get the data
-    filterByAnchor: {
-      type: Boolean,
-      default: true
+    watch: {
+        options: function options(newVal, oldVal) {
+            if (this.filterByAnchor) {
+                var type = this.type,
+                    anchor = this.anchor;
+
+                var regex = new RegExp("" + type, "i");
+                var filtered = newVal.filter(function (item) {
+                    var found = item[anchor].search(regex) !== -1;
+                    return found;
+                });
+                this.json = filtered;
+            } else {
+                this.json = newVal;
+            }
+        }
     },
 
-    // Anchor of list
-    anchor: {
-      type: String,
-      required: true
+    methods: {
+        getClassName: function getClassName(part) {
+            var classes = this.classes,
+                className = this.className;
+
+            if (classes[part]) return "" + classes[part];
+            return className ? className + "-" + part : "";
+        },
+
+
+        // Netralize Autocomplete
+        clearInput: function clearInput() {
+            this.showList = false;
+            this.type = "";
+            this.json = [];
+            this.focusList = "";
+        },
+
+
+        // Get the original data
+        cleanUp: function cleanUp(data) {
+            return JSON.parse(JSON.stringify(data));
+        },
+
+
+        /*==============================
+            INPUT EVENTS
+        =============================*/
+        handleInput: function handleInput(e) {
+            var _this = this;
+
+            var value = e.target.value;
+
+            this.showList = true;
+            // Callback Event
+            if (this.onInput) this.onInput(value);
+            // If Debounce
+            if (this.debounce) {
+                if (this.debounceTask !== undefined) clearTimeout(this.debounceTask);
+                this.debounceTask = setTimeout(function () {
+                    return _this.getData(value);
+                }, this.debounce);
+            } else {
+                return this.getData(value);
+            }
+        },
+        handleKeyDown: function handleKeyDown(e) {
+            var key = e.keyCode;
+
+            // Disable when list isn't showing up
+            if (!this.showList) return;
+
+            // Key List
+            var DOWN = 40;
+            var UP = 38;
+            var ENTER = 13;
+            var ESC = 27;
+
+            // Prevent Default for Prevent Cursor Move & Form Submit
+            switch (key) {
+                case DOWN:
+                    e.preventDefault();
+                    this.focusList++;
+                    break;
+                case UP:
+                    e.preventDefault();
+                    this.focusList--;
+                    break;
+                case ENTER:
+                    e.preventDefault();
+                    this.selectList(this.json[this.focusList]);
+                    this.showList = false;
+                    break;
+                case ESC:
+                    this.showList = false;
+                    break;
+            }
+
+            var listLength = this.json.length - 1;
+            var outOfRangeBottom = this.focusList > listLength;
+            var outOfRangeTop = this.focusList < 0;
+            var topItemIndex = 0;
+            var bottomItemIndex = listLength;
+
+            var nextFocusList = this.focusList;
+            if (outOfRangeBottom) nextFocusList = topItemIndex;
+            if (outOfRangeTop) nextFocusList = bottomItemIndex;
+            this.focusList = nextFocusList;
+        },
+        setValue: function setValue(val) {
+            this.type = val;
+        },
+
+
+        /*==============================
+            LIST EVENTS
+        =============================*/
+
+        handleDoubleClick: function handleDoubleClick() {
+            this.json = [];
+            this.getData("");
+            // Callback Event
+            this.onShow ? this.onShow() : null;
+            this.showList = true;
+        },
+        handleBlur: function handleBlur(e) {
+            var _this2 = this;
+
+            // Callback Event
+            this.onBlur ? this.onBlur(e) : null;
+            setTimeout(function () {
+                // Callback Event
+                _this2.onHide ? _this2.onHide() : null;
+                _this2.showList = false;
+            }, 250);
+        },
+        handleFocus: function handleFocus(e) {
+            this.focusList = 0;
+            // Callback Event
+            this.onFocus ? this.onFocus(e) : null;
+        },
+        mousemove: function mousemove(i) {
+            this.focusList = i;
+        },
+        activeClass: function activeClass(i) {
+            var focusClass = i === this.focusList ? "focus-list" : "";
+            return "" + focusClass;
+        },
+        selectList: function selectList(data) {
+            // Deep clone of the original object
+            var clean = this.cleanUp(data);
+            // Put the selected data to type (model)
+            this.type = clean[this.anchor];
+            // Hide List
+            this.showList = false;
+            // Callback Event
+            this.onSelect ? this.onSelect(clean) : null;
+        },
+        deepValue: function deepValue(obj, path) {
+            var arrayPath = path.split(".");
+            for (var i = 0; i < arrayPath.length; i++) {
+                obj = obj[arrayPath[i]];
+            }
+            return obj;
+        },
+
+
+        /*==============================
+            AJAX EVENTS
+        =============================*/
+
+        composeParams: function composeParams(val) {
+            var _this3 = this;
+
+            var encode = function encode(val) {
+                return _this3.encodeParams ? encodeURIComponent(val) : val;
+            };
+            var params = this.param + "=" + encode(val);
+            if (this.customParams) {
+                Object.keys(this.customParams).forEach(function (key) {
+                    params += "&" + key + "=" + encode(_this3.customParams[key]);
+                });
+            }
+            return params;
+        },
+        composeHeader: function composeHeader(ajax) {
+            var _this4 = this;
+
+            if (this.customHeaders) {
+                Object.keys(this.customHeaders).forEach(function (key) {
+                    ajax.setRequestHeader(key, _this4.customHeaders[key]);
+                });
+            }
+        },
+        doAjax: function doAjax(val) {
+            var _this5 = this;
+
+            if (ajax) {
+                ajax.abort();
+            }
+
+            // Callback Event
+            this.onBeforeAjax ? this.onBeforeAjax(val) : null;
+            // Compose Params
+            var params = this.composeParams(val);
+            // Init Ajax
+
+            ajax = new XMLHttpRequest();
+            ajax.open("GET", this.url + "?" + params, true);
+            this.composeHeader(ajax);
+            // Callback Event
+            ajax.addEventListener("progress", function (data) {
+                if (data.lengthComputable && _this5.onAjaxProgress) _this5.onAjaxProgress(data);
+            });
+            // On Done
+            ajax.addEventListener("loadend", function (e) {
+                var responseText = e.target.responseText;
+
+                var json = JSON.parse(responseText);
+                // Callback Event
+
+                _this5.onAjaxLoaded ? _this5.onAjaxLoaded(json) : null;
+                _this5.json = _this5.process ? _this5.process(json) : json;
+            });
+            // Send Ajax
+
+            ajax.send();
+        },
+        getData: function getData(value) {
+            if (value.length < this.min || !this.url) return;
+            if (this.onShouldGetData) this.manualGetData(value);else this.doAjax(value);
+        },
+
+
+        // Do Ajax Manually, so user can do whatever he want
+        manualGetData: function manualGetData(val) {
+            var _this6 = this;
+
+            var task = this.onShouldGetData(val);
+            if (task && task.then) {
+                return task.then(function (options) {
+                    _this6.json = options;
+                });
+            }
+        }
     },
 
-    // Label of list
-    label: String,
-
-    // Debounce time
-    debounce: Number,
-
-    // ajax URL will be fetched
-    url: {
-      type: String,
-      required: true
+    created: function created() {
+        // Sync parent model with initValue Props
+        this.type = this.initValue ? this.initValue : null;
     },
-
-    // query param
-    param: {
-      type: String,
-      default: "q"
-    },
-
-    encodeParams: {
-      type: Boolean,
-      default: true
-    },
-
-    // Custom Params
-    customParams: Object,
-
-    // Custom Headers
-    customHeaders: Object,
-
-    // minimum length
-    min: {
-      type: Number,
-      default: 0
-    },
-
-    // Create a custom template from data.
-    onShouldRenderChild: Function,
-
-    // Process the result before retrieveng the result array.
-    process: Function,
-
-    // Callback
-    onInput: Function,
-    onShow: Function,
-    onBlur: Function,
-    onHide: Function,
-    onFocus: Function,
-    onSelect: Function,
-    onBeforeAjax: Function,
-    onAjaxProgress: Function,
-    onAjaxLoaded: Function,
-    onShouldGetData: Function
-  },
-
-  data: function data() {
-    return {
-      showList: false,
-      type: "",
-      json: [],
-      focusList: "",
-      debounceTask: undefined
-    };
-  },
-
-
-  watch: {
-    options: function options(newVal, oldVal) {
-      if (this.filterByAnchor) {
-        var type = this.type,
-            anchor = this.anchor;
-
-        var regex = new RegExp("" + type, "i");
-        var filtered = newVal.filter(function (item) {
-          var found = item[anchor].search(regex) !== -1;
-          return found;
-        });
-        this.json = filtered;
-      } else {
-        this.json = newVal;
-      }
+    mounted: function mounted() {
+        if (this.required) this.$refs.input.setAttribute("required", this.required);
     }
-  },
-
-  methods: {
-    getClassName: function getClassName(part) {
-      var classes = this.classes,
-          className = this.className;
-
-      if (classes[part]) return "" + classes[part];
-      return className ? className + "-" + part : "";
-    },
-
-
-    // Netralize Autocomplete
-    clearInput: function clearInput() {
-      this.showList = false;
-      this.type = "";
-      this.json = [];
-      this.focusList = "";
-    },
-
-
-    // Get the original data
-    cleanUp: function cleanUp(data) {
-      return JSON.parse(JSON.stringify(data));
-    },
-
-
-    /*==============================
-        INPUT EVENTS
-      =============================*/
-    handleInput: function handleInput(e) {
-      var _this = this;
-
-      var value = e.target.value;
-
-      this.showList = true;
-      // Callback Event
-      if (this.onInput) this.onInput(value);
-      // If Debounce
-      if (this.debounce) {
-        if (this.debounceTask !== undefined) clearTimeout(this.debounceTask);
-        this.debounceTask = setTimeout(function () {
-          return _this.getData(value);
-        }, this.debounce);
-      } else {
-        return this.getData(value);
-      }
-    },
-    handleKeyDown: function handleKeyDown(e) {
-      var key = e.keyCode;
-
-      // Disable when list isn't showing up
-      if (!this.showList) return;
-
-      // Key List
-      var DOWN = 40;
-      var UP = 38;
-      var ENTER = 13;
-      var ESC = 27;
-
-      // Prevent Default for Prevent Cursor Move & Form Submit
-      switch (key) {
-        case DOWN:
-          e.preventDefault();
-          this.focusList++;
-          break;
-        case UP:
-          e.preventDefault();
-          this.focusList--;
-          break;
-        case ENTER:
-          e.preventDefault();
-          this.selectList(this.json[this.focusList]);
-          this.showList = false;
-          break;
-        case ESC:
-          this.showList = false;
-          break;
-      }
-
-      var listLength = this.json.length - 1;
-      var outOfRangeBottom = this.focusList > listLength;
-      var outOfRangeTop = this.focusList < 0;
-      var topItemIndex = 0;
-      var bottomItemIndex = listLength;
-
-      var nextFocusList = this.focusList;
-      if (outOfRangeBottom) nextFocusList = topItemIndex;
-      if (outOfRangeTop) nextFocusList = bottomItemIndex;
-      this.focusList = nextFocusList;
-    },
-    setValue: function setValue(val) {
-      this.type = val;
-    },
-
-
-    /*==============================
-        LIST EVENTS
-      =============================*/
-
-    handleDoubleClick: function handleDoubleClick() {
-      this.json = [];
-      this.getData("");
-      // Callback Event
-      this.onShow ? this.onShow() : null;
-      this.showList = true;
-    },
-    handleBlur: function handleBlur(e) {
-      var _this2 = this;
-
-      // Callback Event
-      this.onBlur ? this.onBlur(e) : null;
-      setTimeout(function () {
-        // Callback Event
-        _this2.onHide ? _this2.onHide() : null;
-        _this2.showList = false;
-      }, 250);
-    },
-    handleFocus: function handleFocus(e) {
-      this.focusList = 0;
-      // Callback Event
-      this.onFocus ? this.onFocus(e) : null;
-    },
-    mousemove: function mousemove(i) {
-      this.focusList = i;
-    },
-    activeClass: function activeClass(i) {
-      var focusClass = i === this.focusList ? "focus-list" : "";
-      return "" + focusClass;
-    },
-    selectList: function selectList(data) {
-      // Deep clone of the original object
-      var clean = this.cleanUp(data);
-      // Put the selected data to type (model)
-      this.type = clean[this.anchor];
-      // Hide List
-      this.showList = false;
-      // Callback Event
-      this.onSelect ? this.onSelect(clean) : null;
-    },
-    deepValue: function deepValue(obj, path) {
-      var arrayPath = path.split(".");
-      for (var i = 0; i < arrayPath.length; i++) {
-        obj = obj[arrayPath[i]];
-      }
-      return obj;
-    },
-
-
-    /*==============================
-        AJAX EVENTS
-      =============================*/
-
-    composeParams: function composeParams(val) {
-      var _this3 = this;
-
-      var encode = function encode(val) {
-        return _this3.encodeParams ? encodeURIComponent(val) : val;
-      };
-      var params = this.param + "=" + encode(val);
-      if (this.customParams) {
-        Object.keys(this.customParams).forEach(function (key) {
-          params += "&" + key + "=" + encode(_this3.customParams[key]);
-        });
-      }
-      return params;
-    },
-    composeHeader: function composeHeader(ajax) {
-      var _this4 = this;
-
-      if (this.customHeaders) {
-        Object.keys(this.customHeaders).forEach(function (key) {
-          ajax.setRequestHeader(key, _this4.customHeaders[key]);
-        });
-      }
-    },
-    doAjax: function doAjax(val) {
-      var _this5 = this;
-
-      console.log(val);
-      // Callback Event
-      this.onBeforeAjax ? this.onBeforeAjax(val) : null;
-      // Compose Params
-      var params = this.composeParams(val);
-      // Init Ajax
-
-      if (ajax) {
-        ajax.abort();
-      }
-
-      ajax = new XMLHttpRequest();
-      ajax.open("GET", this.url + "?" + params, true);
-      this.composeHeader(ajax);
-      // Callback Event
-      ajax.addEventListener("progress", function (data) {
-        if (data.lengthComputable && _this5.onAjaxProgress) _this5.onAjaxProgress(data);
-      });
-      // On Done
-      ajax.addEventListener("loadend", function (e) {
-        var responseText = e.target.responseText;
-
-        var json = JSON.parse(responseText);
-        // Callback Event
-
-        _this5.onAjaxLoaded ? _this5.onAjaxLoaded(json) : null;
-        _this5.json = _this5.process ? _this5.process(json) : json;
-      });
-      // Send Ajax
-
-      ajax.send();
-    },
-    getData: function getData(value) {
-      if (value.length < this.min || !this.url) return;
-      if (this.onShouldGetData) this.manualGetData(value);else this.doAjax(value);
-    },
-
-
-    // Do Ajax Manually, so user can do whatever he want
-    manualGetData: function manualGetData(val) {
-      var _this6 = this;
-
-      var task = this.onShouldGetData(val);
-      if (task && task.then) {
-        return task.then(function (options) {
-          _this6.json = options;
-        });
-      }
-    }
-  },
-
-  created: function created() {
-    // Sync parent model with initValue Props
-    this.type = this.initValue ? this.initValue : null;
-  },
-  mounted: function mounted() {
-    if (this.required) this.$refs.input.setAttribute("required", this.required);
-  }
 });
 
 /***/ }),
