@@ -134,17 +134,21 @@ return /******/ (function(modules) { // webpackBootstrap
 //
 //
 //
+//
+//
+//
+//
 
+/*! Copyright (c) 2021 Daniel H (http://github.com/dcorrea-estrav)
+ * Licensed Under MIT (http://opensource.org/licenses/MIT)
+ *
+ * Vue 2 Autocomplete @ Version 2.0.x
+ *
+ */
 
-/*! Copyright (c) 2021 Daniel H. (http://github.com/dcorrea-estrav),
-* Licensed Under MIT (http://opensource.org/licenses/MIT)
-*
-* Vue 2 Autocomplete @ Version 0.0.1
-*
-*/
+var ajax = null;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-
   props: {
     id: String,
     name: String,
@@ -199,7 +203,7 @@ return /******/ (function(modules) { // webpackBootstrap
     // query param
     param: {
       type: String,
-      default: 'q'
+      default: "q"
     },
 
     encodeParams: {
@@ -255,7 +259,7 @@ return /******/ (function(modules) { // webpackBootstrap
         var type = this.type,
             anchor = this.anchor;
 
-        var regex = new RegExp("" + type, 'i');
+        var regex = new RegExp("" + type, "i");
         var filtered = newVal.filter(function (item) {
           var found = item[anchor].search(regex) !== -1;
           return found;
@@ -273,7 +277,7 @@ return /******/ (function(modules) { // webpackBootstrap
           className = this.className;
 
       if (classes[part]) return "" + classes[part];
-      return className ? className + "-" + part : '';
+      return className ? className + "-" + part : "";
     },
 
 
@@ -293,8 +297,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
     /*==============================
-      INPUT EVENTS
-    =============================*/
+        INPUT EVENTS
+      =============================*/
     handleInput: function handleInput(e) {
       var _this = this;
 
@@ -362,8 +366,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
     /*==============================
-      LIST EVENTS
-    =============================*/
+        LIST EVENTS
+      =============================*/
 
     handleDoubleClick: function handleDoubleClick() {
       this.json = [];
@@ -392,7 +396,7 @@ return /******/ (function(modules) { // webpackBootstrap
       this.focusList = i;
     },
     activeClass: function activeClass(i) {
-      var focusClass = i === this.focusList ? 'focus-list' : '';
+      var focusClass = i === this.focusList ? "focus-list" : "";
       return "" + focusClass;
     },
     selectList: function selectList(data) {
@@ -406,7 +410,7 @@ return /******/ (function(modules) { // webpackBootstrap
       this.onSelect ? this.onSelect(clean) : null;
     },
     deepValue: function deepValue(obj, path) {
-      var arrayPath = path.split('.');
+      var arrayPath = path.split(".");
       for (var i = 0; i < arrayPath.length; i++) {
         obj = obj[arrayPath[i]];
       }
@@ -415,8 +419,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
     /*==============================
-      AJAX EVENTS
-    =============================*/
+        AJAX EVENTS
+      =============================*/
 
     composeParams: function composeParams(val) {
       var _this3 = this;
@@ -444,28 +448,36 @@ return /******/ (function(modules) { // webpackBootstrap
     doAjax: function doAjax(val) {
       var _this5 = this;
 
+      console.log(val);
       // Callback Event
       this.onBeforeAjax ? this.onBeforeAjax(val) : null;
       // Compose Params
       var params = this.composeParams(val);
       // Init Ajax
-      var ajax = new XMLHttpRequest();
-      ajax.open('GET', this.url + "?" + params, true);
+
+      if (ajax) {
+        ajax.abort();
+      }
+
+      ajax = new XMLHttpRequest();
+      ajax.open("GET", this.url + "?" + params, true);
       this.composeHeader(ajax);
       // Callback Event
-      ajax.addEventListener('progress', function (data) {
+      ajax.addEventListener("progress", function (data) {
         if (data.lengthComputable && _this5.onAjaxProgress) _this5.onAjaxProgress(data);
       });
       // On Done
-      ajax.addEventListener('loadend', function (e) {
+      ajax.addEventListener("loadend", function (e) {
         var responseText = e.target.responseText;
 
         var json = JSON.parse(responseText);
         // Callback Event
+
         _this5.onAjaxLoaded ? _this5.onAjaxLoaded(json) : null;
         _this5.json = _this5.process ? _this5.process(json) : json;
       });
       // Send Ajax
+
       ajax.send();
     },
     getData: function getData(value) {
