@@ -55,8 +55,7 @@
  * Vue 2 Autocomplete @ Version 2.0.x
  *
  */
-
-var ajax = null;
+let ajax;
 
 export default {
     props: {
@@ -347,7 +346,6 @@ export default {
             if(ajax){
                 ajax.abort();
             }
-
             // Callback Event
             this.onBeforeAjax ? this.onBeforeAjax(val) : null;
             // Compose Params
@@ -365,9 +363,8 @@ export default {
             // On Done
             ajax.addEventListener("loadend", (e) => {
                 const { responseText } = e.target;
-                let json = JSON.parse(responseText);
+                let json = JSON.parse(responseText.length > 0 ? responseText : "[]");
                 // Callback Event
-
                 this.onAjaxLoaded ? this.onAjaxLoaded(json) : null;
                 this.json = this.process ? this.process(json) : json;
             });

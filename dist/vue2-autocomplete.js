@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Daniel H. (http://github.com/dcorrea-estrav),
  * ,Licensed Under MIT (http://opensource.org/licenses/MIT),
  * ,
- * ,Vue 2 Autocomplete @ Version 2.1.1,
+ * ,Vue 2 Autocomplete @ Version 2.1.5,
  * 
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -145,8 +145,7 @@ return /******/ (function(modules) { // webpackBootstrap
  * Vue 2 Autocomplete @ Version 2.0.x
  *
  */
-
-var ajax = null;
+var ajax = void 0;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     props: {
@@ -451,7 +450,6 @@ var ajax = null;
             if (ajax) {
                 ajax.abort();
             }
-
             // Callback Event
             this.onBeforeAjax ? this.onBeforeAjax(val) : null;
             // Compose Params
@@ -469,9 +467,8 @@ var ajax = null;
             ajax.addEventListener("loadend", function (e) {
                 var responseText = e.target.responseText;
 
-                var json = JSON.parse(responseText);
+                var json = JSON.parse(responseText.length > 0 ? responseText : "[]");
                 // Callback Event
-
                 _this5.onAjaxLoaded ? _this5.onAjaxLoaded(json) : null;
                 _this5.json = _this5.process ? _this5.process(json) : json;
             });

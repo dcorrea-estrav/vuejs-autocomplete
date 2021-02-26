@@ -2,13 +2,11 @@
 <template>
   <div>
     <autocomplete
-      url="https://maps.googleapis.com/maps/api/geocode/json?address="
-      anchor="formatted_address"
-      label="geometry.location.lat"
+      url="http://evpiu-vue.test/search-customer"
+      anchor="name"
+      label="name"
       name="autocomplete"
-      :customParams="{ token: 'dev' }"
       :classes="{ input: 'form-control', wrapper: 'input-wrapper'}"
-      :process="processJSON"
       :onSelect="handleSelect"
     >
     </autocomplete>
