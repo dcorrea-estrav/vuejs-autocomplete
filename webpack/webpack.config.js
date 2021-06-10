@@ -1,5 +1,7 @@
 
 require('es6-promise').polyfill();
+const { VueLoaderPlugin } = require('vue-loader')
+
 
 module.exports = {
 
@@ -13,7 +15,7 @@ module.exports = {
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.vue$/,
         loader: 'vue-loader'
@@ -28,6 +30,11 @@ module.exports = {
         use: ['style-loader','css-loader']
       }
     ]
-  }
+  },
+  
+  plugins: [
+    // make sure to include the plugin for the magic
+    new VueLoaderPlugin()
+  ]
 
 };

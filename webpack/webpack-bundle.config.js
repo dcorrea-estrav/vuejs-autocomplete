@@ -1,6 +1,7 @@
 
 var webpack = require('webpack');
 require('es6-promise').polyfill();
+const { VueLoaderPlugin } = require('vue-loader')
 
 var npm = require("../package.json");
 
@@ -22,8 +23,7 @@ module.exports = {
 
 
   module: {
-
-    loaders: [
+    rules: [
       {
         test: /\.vue$/,
         loader: 'vue-loader'
@@ -61,6 +61,8 @@ module.exports = {
         'NODE_ENV': '"production"'
       }
     }),
+
+    new VueLoaderPlugin()
 
   ]
 
